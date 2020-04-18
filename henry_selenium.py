@@ -1,5 +1,6 @@
 from selenium import webdriver
 import os
+import pandas
 #參考 https://www.youtube.com/watch?v=Ven-pqwk3ec
 
 
@@ -8,8 +9,8 @@ chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--no-sandbox")
-driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options= chrome_options)
-
+#driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options= chrome_options)
+driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
 url = "https://fuli.gamer.com.tw/shop.php"
 
 driver.get(url)
@@ -26,3 +27,5 @@ for i in range(len(titles)):
     listall1.append([titles[i].text,hrefs[i].get_attribute('href'),imgs[i].get_attribute('src'),Popularitys[x].text.split('\n')[0],Popularitys[x].text.split('\n')[1],Popularitys[y].text.replace(' ',':',1),Popularitys[z].text.replace('\n',':',1).replace('\n',"")])
 
 print(listall1)
+
+df1 =pandas.DataFrame(listall1,columns=["title","href","img","人氣","商品數量","活動時間","購買方式"])
