@@ -45,7 +45,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 #參考 https://github.com/maloyang/heroku-clock-howto (heroku上設定排程)
 sched = BlockingScheduler()
 
-@sched.scheduled_job('interval', minutes=1)
+@sched.scheduled_job('cron', day_of_week='mon-fri', hour=20)
 def timed_job():   
     url = 'https://today.line.me/TW/publisher/101508'
     df4 = pandas.DataFrame(list(parse_source(url)))
