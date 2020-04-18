@@ -20,14 +20,14 @@ driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), c
 def parse_source(url):
     #driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
     driver.get(url)
-    soup =  BeautifulSoup(driver.page_source, 'lxml')
+    soup =  BeautifulSoup(driver.page_source)
     hrefs = soup.find_all('a','lnk vLink')
     for href in hrefs:
         #print(href['href'],'\n')
         yield parse_detail(href['href'])
 def parse_detail(url):
     driver.get(url)
-    res = BeautifulSoup(driver.page_source, 'lxml')
+    res = BeautifulSoup(driver.page_source)
     short_url = res.find('meta',property="og:url")['content'].split("-")[-1]
     href = "https://today.line.me/TW/pc/article/{}?utm_source=copyshare".format(short_url)
     title = res.find('meta',property="og:title")['content'].replace('【TODAY 看世界】','').replace('TODAY 看世界 | ','')
