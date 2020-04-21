@@ -47,8 +47,8 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched = BlockingScheduler()
 
-@sched.scheduled_job('cron', day_of_week='mon-fri', hour=20)
-#@sched.cron_schedule(day_of_week='mon-fri', hour=22,minute=31)
+#@sched.scheduled_job('cron', day_of_week='mon-fri', hour=20)
+@sched.cron_schedule(day_of_week='mon-fri', hour=22,minute=40)
 def timed_job():   
     url = 'https://today.line.me/TW/publisher/101508'
     df4 = pandas.DataFrame(list(parse_source(url)))
