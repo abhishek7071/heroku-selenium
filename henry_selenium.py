@@ -33,10 +33,9 @@ def parse_detail(url):
     title = res.find('meta',property="og:title")['content'].replace('【TODAY 看世界】','').replace('TODAY 看世界 | ','')
     # resq = requests.get('https://today.line.me/tw/article/%E7%A2%BA%E8%A8%BA%E6%95%B8%E9%AB%98%E5%B1%85%E5%85%A8%E7%90%83%E7%AC%AC5+%E6%AD%BB%E4%BA%A1%E7%8E%87%E5%8D%BB%E5%83%851+%E5%BE%B7%E5%9C%8B%E7%9A%84%E4%BD%9C%E6%B3%95%E7%9C%9F%E8%83%BD%E6%9C%89%E6%95%88%E9%98%B2%E7%96%AB%E5%97%8E%EF%BC%9F-1Ego09') #測試用requests的方式是否可以成功
     # res = bs(resq.text)
-    time = res.find('dd','date').text.replace('發布時間 ','')
+    time = res.find('p','date').text.strip().replace('發布時間 : ','')
     time = datetime.datetime.strptime(time, '%Y年%m月%d日%H:%M')
-    text1 = res.find('article','bx-dsc').text.strip()+'\n'+res.find('article','bx-dsc').find_all('p')[1].text.replace(u'\u3000',u'')
-    article = text1.split("《TODAY 看世界》")[0]
+    article = res.find('article','video-cont').text.strip().split("《TODAY 看世界》")[0]
     return {"href":href,"title":title,"time":time,"article":article}   
 
 #driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
@@ -48,7 +47,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 sched = BlockingScheduler()
 
 #@sched.scheduled_job('cron', day_of_week='mon-fri', hour=20)
-@sched.scheduled_job('cron',day_of_week='mon-fri', hour=23,minute=15)
+@sched.scheduled_job('cron',day_of_week='mon-fri', hour=23,minute=45)
 def timed_job():   
     url = 'https://today.line.me/TW/publisher/101508'
     df4 = pandas.DataFrame(list(parse_source(url)))
