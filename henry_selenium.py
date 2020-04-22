@@ -47,7 +47,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 sched = BlockingScheduler()
 
 #@sched.scheduled_job('cron', day_of_week='mon-fri', hour=20)
-@sched.scheduled_job('cron',day_of_week='mon-fri', hour=24)#,minute=45
+#@sched.scheduled_job('cron',day_of_week='mon-fri', hour=24)#,minute=45
 def timed_job():   
     url = 'https://today.line.me/TW/publisher/101508'
     df4 = pandas.DataFrame(list(parse_source(url)))
@@ -62,6 +62,8 @@ def timed_job():
     }
     
     res = requests.post('https://notify-api.line.me/api/notify', data = payload, headers = headers)
+
+sched.add_job(timed_job, 'cron', day_of_week='mon-fri', hour=23)
 
 sched.start()
 
