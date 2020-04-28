@@ -63,9 +63,16 @@ def timed_job():
     
     res = requests.post('https://notify-api.line.me/api/notify', data = payload, headers = headers)
 
-sched.add_job(timed_job, 'cron', day_of_week='mon-fri', hour=20)
+
+sched.add_job(timed_job, 'cron', day_of_week='mon-fri', hour=20,minute = 1)
 
 sched.start()
+
+
+
+
+
+
 
 
 #driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
