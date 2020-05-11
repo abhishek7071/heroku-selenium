@@ -5,7 +5,7 @@ from selenium import webdriver
 import os
 import datetime
 import pandas
-import time
+
 
 #參考 https://www.youtube.com/watch?v=Ven-pqwk3ec (讓heroku上可以使用selenium)
 
@@ -17,14 +17,14 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--no-sandbox")
 driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options= chrome_options)
 
-
 def parse_source(url):
     #driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
     driver.get(url)
     soup =  BeautifulSoup(driver.page_source)
     hrefs = soup.find_all('a','lnk vLink')
-    return parse_detail(hrefs[0]['href'])
-
+    for href in hrefs:
+        #print(href['href'],'\n')
+        yield parse_detail(href['href'])
 def parse_detail(url):
     driver.get(url)
     res = BeautifulSoup(driver.page_source)
@@ -33,10 +33,10 @@ def parse_detail(url):
     title = res.find('meta',property="og:title")['content'].replace('【TODAY 看世界】','').replace('TODAY 看世界 | ','')
     # resq = requests.get('https://today.line.me/tw/article/%E7%A2%BA%E8%A8%BA%E6%95%B8%E9%AB%98%E5%B1%85%E5%85%A8%E7%90%83%E7%AC%AC5+%E6%AD%BB%E4%BA%A1%E7%8E%87%E5%8D%BB%E5%83%851+%E5%BE%B7%E5%9C%8B%E7%9A%84%E4%BD%9C%E6%B3%95%E7%9C%9F%E8%83%BD%E6%9C%89%E6%95%88%E9%98%B2%E7%96%AB%E5%97%8E%EF%BC%9F-1Ego09') #測試用requests的方式是否可以成功
     # res = bs(resq.text)
-    time_s = res.find('p','date').text.strip().replace('發布時間 : ','')
-    time_s = datetime.datetime.strptime(time_s, '%Y年%m月%d日%H:%M')
+    time = res.find('p','date').text.strip().replace('發布時間 : ','')
+    time = datetime.datetime.strptime(time, '%Y年%m月%d日%H:%M')
     article = res.find('article','video-cont').text.strip().split("《TODAY 看世界》")[0]
-    return {"href":href,"title":title,"time":time_s,"article":article}   
+    return {"href":href,"title":title,"time":time,"article":article}   
 
 #driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
 
@@ -50,38 +50,21 @@ sched = BlockingScheduler()
 #@sched.scheduled_job('cron',day_of_week='mon-fri', hour=24)#,minute=45
 def timed_job():   
     url = 'https://today.line.me/TW/publisher/101508'
-    #df4 = pandas.DataFrame(list(parse_source(url)))
-    df4 = parse_source(url)
-    now = datetime.datetime.now()
-    now_s = now.strftime("%Y-%m-%d")
-    time_s = str(df4["time"]).split(' ')[0]
-    while(True):
-        df4 = parse_source(url)
-        time_s = str(df4["time"]).split(' ')[0] 
-        now = datetime.datetime.now()   
-        if now_s == time_s:
-            token = 'kEujm1BoMS0AvgNnF8QQ8RHXbUgO3viRsI3oFrZNhTT'
-            headers = {
-                'Content-type': 'application/x-www-form-urlencoded',
-                'Authorization': f'Bearer {token}'
-            }
-            
-            payload = {
-             'message':'\n\n{}\n\n{}\n\n{}\n\n{}'.format(df4["title"],df4["time"],df4["href"],df4["article"]),
-            }
-            
-            res = requests.post('https://notify-api.line.me/api/notify', data = payload, headers = headers)
-            break
-        
-        elif now.hour>=21 :
-            break
-        else:
-            time.sleep(60)
-            print(now)
-            continue
- 
+    df4 = pandas.DataFrame(list(parse_source(url)))
+    token = 'kEujm1BoMS0AvgNnF8QQ8RHXbUgO3viRsI3oFrZNhTT'
+    headers = {
+        'Content-type': 'application/x-www-form-urlencoded',
+        'Authorization': f'Bearer {token}'
+    }
+    
+    payload = {
+     'message':'\n\n{}\n\n{}\n\n{}\n\n{}'.format(df4.iloc[0]["title"],df4.iloc[0]["time"],df4.iloc[0]["href"],df4.iloc[0]["article"]),
+    }
+    
+    res = requests.post('https://notify-api.line.me/api/notify', data = payload, headers = headers)
 
-sched.add_job(timed_job, 'cron', day_of_week='mon-fri', hour=19,minute = 1)
+
+sched.add_job(timed_job, 'cron', day_of_week='mon-fri', hour=20,minute = 1)
 
 sched.start()
 
