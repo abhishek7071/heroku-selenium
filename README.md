@@ -7,7 +7,7 @@
 <img src="https://github.com/henry8082/heroku-selenium/blob/master/S__63660101.jpg" width = "30%" /> <img src="https://github.com/henry8082/heroku-selenium/blob/master/S__63660102.jpg" width = "30%" /> <img src="https://github.com/henry8082/heroku-selenium/blob/master/S__63660099.jpg" width = "30%" />
 ---------------------------------------
 重要設定：
-
+---------------------------------------
 在讓heroku上面能使用要在檔案內另外設定下列參數(<a href="https://www.youtube.com/watch?v=Ven-pqwk3ec">參考網址</a>)
 
 chrome_options = webdriver.ChromeOptions()
@@ -31,6 +31,7 @@ GOOGLE_CHROME_BIN = /app/.apt/usr/bin/google-chrome
 
 
 heroku上才能正常使用selenium
+
 ---------------------------------------
 因推播時間為臺灣時區，跟heroku的時區不同
 
