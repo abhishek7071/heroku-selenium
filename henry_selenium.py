@@ -19,7 +19,7 @@ driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), c
 
 
 def parse_source(url):
-    #driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
+    #driver = webdriver.Chrome(r"chromedriver的路徑")#本機測試用
     driver.get(url)
     soup =  BeautifulSoup(driver.page_source)
     hrefs = soup.find_all('a','lnk vLink')
@@ -38,7 +38,6 @@ def parse_detail(url):
     article = res.find('article','video-cont').text.strip().split("《TODAY 看世界》")[0]
     return {"href":href,"title":title,"time":time_s,"article":article}   
 
-#driver = webdriver.Chrome(r"C:\Users\user\Desktop\聯成助教資料\練習\chromedriver")
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 #參考 https://github.com/maloyang/heroku-clock-howto (heroku上設定排程)
