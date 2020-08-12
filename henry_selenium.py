@@ -7,8 +7,6 @@ import datetime
 import pandas
 import time
 
-#參考 https://www.youtube.com/watch?v=Ven-pqwk3ec (讓heroku上可以使用selenium)
-
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
